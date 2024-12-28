@@ -129,7 +129,7 @@ class Decoder(nn.Module):
                 P_ltxy,
                 P_lvel,
                 P_lvrt,
-            ) = devectorize_output(
+                ) = devectorize_output(
                 predicted,
                 O_root_pos[-1],
                 O_root_rot[-1],
