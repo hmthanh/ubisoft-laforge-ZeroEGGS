@@ -33,6 +33,7 @@ def train(
         path_data_definition,
         train_options,
         network_options,
+        device=torch.device("cuda:0")
 ):
     # ===============================================
     #    Getting/Setting Training/Network Configs
@@ -40,14 +41,16 @@ def train(
     np.random.seed(train_options["seed"])
     torch.manual_seed(train_options["seed"])
     torch.set_num_threads(train_options["thread_count"])
-    use_gpu = train_options["use_gpu"] and torch.cuda.is_available()
+    use_gpu = (train_options["use_gpu"])
+    # and torch.cuda.is_available())
     use_script = train_options["use_script"]
 
-    if use_gpu:
-        print("Using GPU!")
-    else:
-        print("Using CPU!")
-    device = torch.device("cuda:0" if use_gpu else "cpu")
+    # if use_gpu:
+    #     print("Using GPU!")
+    # else:
+    #     print("Using CPU!")
+    # device = torch.device("cuda:0" if use_gpu else "cpu")
+    # device = torch.device("mps")
     window = train_options["window"]
     niterations = train_options["niterations"]
     batchsize = train_options["batchsize"]
