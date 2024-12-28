@@ -3,6 +3,7 @@ import scipy.signal as sps
 
 from .logs import get_logger_from_arg
 from .signal_manipulation import preemphasis
+from scipy.signal.windows import hann
 
 
 def extract_mel_spectrogram_for_tts(wav_signal, fs, n_fft, step_size, n_mels, mel_fmin, mel_fmax, min_amplitude,
@@ -227,7 +228,7 @@ def extract_spectrogram(x, n_fft, step_size, real_amplitude=True, centered=True)
     :return: Numpy arrays of amplitude and phase of the spectrogram -- shapes = (n_fft // 2 + 1, L)
     """
     # create the sampling window
-    window = sps.hann(n_fft)
+    window = hann(n_fft)
 
     # check input signal has a length superior or equal to n_fft
     if len(x) < n_fft:
