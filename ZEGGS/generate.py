@@ -32,7 +32,8 @@ def generate_gesture(
         first_pose=None,
         temperature=1.0,
         seed=1234,
-        use_gpu=True,
+        # use_gpu=True,
+        device=torch.device("cuda:0"),
         use_script=False,
 ):
     """Generate stylized gesture from raw audio and style example (ZEGGS)
@@ -63,7 +64,8 @@ def generate_gesture(
                                        Defaults to None.
         temperature (float, optional): VAE temprature. This adjusts the amount of stochasticity. Defaults to 1.0.
         seed (int, optional): Random seed. Defaults to 1234.
-        use_gpu (bool, optional): Use gpu or cpu. Defaults to True.
+        # use_gpu (bool, optional): Use gpu or cpu. Defaults to True.
+        device (torch.device, optional): Device to use. Defaults to torch.device("cuda:0").
         use_script (bool, optional): Use torch script. Defaults to False.
 
     Returns:
@@ -86,7 +88,7 @@ def generate_gesture(
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.set_num_threads(1)
-    device = "cuda" if use_gpu and torch.cuda.is_available() else "cpu"
+    # device = "cuda" if use_gpu and torch.cuda.is_available() else "cpu"
 
     # Data pipeline conf (We must use the same processing configuration as the one in training)
     with open(path_data_pipeline_conf, "r") as f:
@@ -132,7 +134,7 @@ def generate_gesture(
 
     network_decoder = torch.load(path_network_decoder_weights, map_location=device).to(device)
     network_decoder.eval()
-    
+
     if style_encoding_type == "example":
         network_style_encoder = torch.load(path_network_style_encoder_weights, map_location=device).to(device)
         network_style_encoder.eval()
@@ -421,12 +423,7 @@ if __name__ == "__main__":
     # Setting parser
     parser = argparse.ArgumentParser(prog="ZEGGS", description="Generate samples by ZEGGS model")
 
-    parser.add_argument(
-        "-o",
-        "--options",
-        type=str,
-        help="Options filename (generated during training)",
-    )
+    parser.add_argument("-o", "--options", type=str, help="Options filename (generated during training)", )
     parser.add_argument('-p', '--results_path', type=str,
                         help="Results path. Default if 'results' directory in the folder containing networks",
                         nargs="?", const=None, required=False)
@@ -453,6 +450,9 @@ if __name__ == "__main__":
                         required=False)
 
     args = parser.parse_args()
+
+    # device = torch.device("cuda:0")
+    device = torch.device("cpu")
 
     with open(args.options, "r") as f:
         options = json.load(f)
@@ -501,7 +501,8 @@ if __name__ == "__main__":
                     first_pose=base_path / Path(row["first_pose"]),
                     temperature=row["temperature"],
                     seed=row["seed"],
-                    use_gpu=row["use_gpu"]
+                    # use_gpu=row["use_gpu"],
+                    device=device
                 )
     else:
         with console.status(console.rule("Generating Gesture")):
@@ -521,5 +522,6 @@ if __name__ == "__main__":
                 first_pose=args.first_pose,
                 temperature=args.temperature,
                 seed=args.seed,
-                use_gpu=args.use_gpu
+                # use_gpu=args.use_gpu
+                device=device
             )
