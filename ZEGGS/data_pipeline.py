@@ -737,6 +737,10 @@ def data_pipeline(conf):
 
 
 if __name__ == "__main__":
+    """
+    python data_pipeline.py
+    """
+
     config_file = "../configs/data_pipeline_conf_v1.json"
     with open(config_file, "r") as f:
         conf = json.load(f)

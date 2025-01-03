@@ -739,6 +739,9 @@ def train(
 
 
 if __name__ == "__main__":
+    """
+    python train.py
+    """
 
     # For debugging
     options = "../configs/configs_v2.json"
